@@ -1,0 +1,41 @@
+:root {
+  --bg: #f6f7f9; --card: #ffffff; --ink: #1d2430; --muted: #5d6675; --line: #e2e5ea;
+  --accent: #1f7a3a; --accent-ink: #ffffff; --code: #f1f3f6; --ok: #1f7a3a; --bad: #b3261e;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #12161c; --card: #1a2029; --ink: #e6e9ee; --muted: #9aa3b2; --line: #2c3440;
+          --accent: #3fa35f; --accent-ink: #0b1410; --code: #222a35; --ok: #5cc27d; --bad: #f2867c; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+       font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+header { background: var(--card); border-bottom: 1px solid var(--line); padding: 28px 0 20px; }
+h1 { margin: 0 0 6px; font-size: 26px; }
+h2 { margin: 0 0 12px; font-size: 19px; }
+.sub, .muted { color: var(--muted); }
+section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin: 20px 0; }
+footer { padding: 8px 16px 40px; font-size: 13px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 13px; color: var(--muted); font-weight: 600; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.tabela-scroll { overflow-x: auto; }
+table.mini { margin: 10px 0; font-size: 14px; }
+code, pre { font-family: ui-monospace, Consolas, monospace; font-size: 13px; background: var(--code); border-radius: 5px; }
+code { padding: 1px 5px; word-break: break-all; }
+pre { padding: 12px; overflow-x: auto; white-space: pre; margin: 6px 0 0; }
+.linha { display: flex; gap: 8px; flex-wrap: wrap; }
+input { flex: 1 1 260px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 7px;
+        background: var(--bg); color: var(--ink); font: inherit; }
+button { padding: 9px 16px; border: 0; border-radius: 7px; background: var(--accent); color: var(--accent-ink);
+         font: inherit; font-weight: 600; cursor: pointer; }
+button.sec { background: var(--code); color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.passos li { margin: 6px 0; }
+.bloco { margin: 16px 0; }
+.bloco-cab { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.bloco-cab b { font-size: 14px; }
+.ok { color: var(--ok); font-weight: 600; }
+.bad { color: var(--bad); font-weight: 600; }
+.meses { font-size: 13px; color: var(--muted); }

@@ -1,0 +1,4 @@
+.env
+.env.*
+servidor_local.py
+__pycache__/

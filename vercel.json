@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/api/estado", "destination": "/api/powerbi?acao=estado" },
+    { "source": "/api/dados", "destination": "/api/powerbi" }
+  ],
+  "functions": {
+    "api/powerbi.py": { "maxDuration": 60 }
+  }
+}
