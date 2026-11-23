@@ -13,7 +13,8 @@ esquema `powerbi`, carregada por um processo externo.
 A página inicial (`/`) mostra o estado dos dados, testa a chave e gera o código Power Query pronto a colar.
 
 ## Publicar no Vercel
-1. Importar este repositório no Vercel (Framework: **Other**).
+1. Importar este repositório no Vercel (Framework: **Other**). A entrada Python está no `pyproject.toml`
+   (`[tool.vercel] entrypoint = "api.powerbi:handler"`); a página está em `public/`.
 2. **Settings → Environment Variables**:
    - `NEON_POWERBI_URL` – ligação PostgreSQL (`postgresql://…?sslmode=require`)
    - `POWERBI_API_KEY` – chave de leitura (longa e aleatória)

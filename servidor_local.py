@@ -1,5 +1,5 @@
 """Teste local (imita o Vercel): python servidor_local.py  ->  http://localhost:8000
-Le o .env desta pasta (NEON_POWERBI_URL, POWERBI_API_KEY)."""
+Le o .env desta pasta (NEON_POWERBI_URL, POWERBI_API_KEY). /api/* -> api/powerbi.py; resto -> public/."""
 import os
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -14,22 +14,13 @@ from api.powerbi import handler as Api  # noqa: E402
 
 
 class Local(SimpleHTTPRequestHandler):
-    def __init__(self, *a, **k):
-        super().__init__(*a, directory=str(AQUI), **k)
+    _responder, _erro = Api._responder, Api._erro
 
-    def _api(self):
-        if self.path.startswith('/api/estado'):
-            self.path = '/api/powerbi?acao=estado'
-        Api.do_GET(self) if self.command != 'OPTIONS' else Api.do_OPTIONS(self)
+    def __init__(self, *a, **k):
+        super().__init__(*a, directory=str(AQUI / 'public'), **k)
 
     def do_GET(self):
-        if self.path.startswith('/api/'):
-            Api._responder = Api._responder  # noqa: PLW0127
-            return Api.__dict__['do_GET'](self) if not self.path.startswith('/api/estado') else self._api()
-        return super().do_GET()
-
-    _responder = Api._responder
-    _erro = Api._erro
+        return Api.do_GET(self) if self.path.startswith('/api/') else super().do_GET()
 
 
 if __name__ == '__main__':

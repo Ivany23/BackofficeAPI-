@@ -1,0 +1,8 @@
+[project]
+name = "backoffice-api-powerbi"
+version = "1.0.0"
+requires-python = ">=3.12"
+dependencies = ["psycopg2-binary==2.9.10"]
+
+[tool.vercel]
+entrypoint = "api.powerbi:handler"
