@@ -10,7 +10,9 @@ esquema `powerbi`, carregada por um processo externo.
 | `GET /api/estado` | JSON público: tabelas, linhas, páginas, colunas, linhas por mês, data dos dados |
 | `GET /api/dados?tabela=<t>&pagina=<n>&chave=<k>` | CSV UTF-8 com cabeçalho e até 10 000 linhas (a chave também pode ir no cabeçalho `x-api-key`) |
 
-A página inicial (`/`) mostra o estado dos dados, testa a chave e gera o código Power Query pronto a colar.
+| `GET /api/painel` (com chave) | JSON do painel do mês actual: totais, lojas por auditor (e subida desde a carga anterior), leituras por dia, províncias e lojas com GPS para o mapa |
+
+A página inicial (`/`) mostra o painel (totais, mapa OpenStreetMap das lojas, auditores, leituras por dia, províncias), o estado dos dados, testa a chave e gera o código Power Query pronto a colar.
 
 ## Publicar no Vercel
 1. Importar este repositório no Vercel (Framework: **Other**). A entrada Python está no `pyproject.toml`

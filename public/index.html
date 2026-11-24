@@ -4,17 +4,78 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Heineken API Power BI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="estilo.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%231d7a49%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%226%22 fill=%22%23e2f1e7%22/%3E%3C/svg%3E">
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <h1>Heineken · API Power BI</h1>
-    <p class="sub">Os relatórios Heineken (todos os meses) num endereço que o Power BI lê com credencial <b>Anónimo</b>: sem login Microsoft, sem gateway, sem partilhar ficheiros.</p>
+<header class="topo">
+  <div class="wrap topo-in">
+    <div class="marca">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <h1>Heineken · Retail Audit</h1>
+        <p class="sub">Painel e API Power BI — dados actualizados a cada carga</p>
+      </div>
+    </div>
+    <div class="pilulas">
+      <span class="pilula" id="p-mes">—</span>
+      <span class="pilula verde" id="p-ate">Dados até —</span>
+      <span class="pilula" id="p-carga">Última carga —</span>
+    </div>
   </div>
+  <nav class="wrap abas">
+    <a href="#painel" class="ativo">Painel</a><a href="#mapa-sec">Mapa</a><a href="#auditores-sec">Auditores</a><a href="#doc">Documentação</a>
+  </nav>
 </header>
 
 <main class="wrap">
+  <div id="sem-chave" class="aviso" hidden>
+    <b>Cole a sua chave para ver o painel.</b> O campo está no <a href="#chave-sec">ponto 2 da documentação</a>; depois de colar, o painel abre sozinho.
+  </div>
+
+  <section id="painel" class="painel">
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section id="mapa-sec">
+    <div class="sec-cab">
+      <div><h2>Mapa das lojas</h2><p class="muted" id="mapa-info">—</p></div>
+      <div class="filtros">
+        <select id="f-auditor" aria-label="Filtrar por auditor"><option value="">Todos os auditores</option></select>
+        <div class="chips" role="group" aria-label="Filtrar por estado">
+          <button type="button" class="chip on" data-st="1"><i class="pt done"></i>Audit done</button>
+          <button type="button" class="chip on" data-st="0"><i class="pt nd"></i>Audit not done</button>
+        </div>
+      </div>
+    </div>
+    <div id="mapa" role="region" aria-label="Mapa das lojas (OpenStreetMap)"></div>
+  </section>
+
+  <section id="auditores-sec">
+    <div class="sec-cab">
+      <div><h2>Lojas por auditor</h2><p class="muted" id="aud-info">—</p></div>
+      <div class="legenda"><span><i class="pt done"></i>Audit done</span><span><i class="pt nd"></i>Audit not done</span><span><i class="pt sobe"></i>Subida desde a carga anterior</span></div>
+    </div>
+    <div id="auditores" class="auditores"></div>
+  </section>
+
+  <div class="grelha2">
+    <section>
+      <div class="sec-cab"><div><h2>Leituras por dia</h2><p class="muted">Visitas do mês por dia</p></div>
+        <div class="legenda"><span><i class="pt done"></i>Audit done</span><span><i class="pt nd"></i>Audit not done</span></div></div>
+      <div id="dias" class="grafico"></div>
+    </section>
+    <section>
+      <div class="sec-cab"><div><h2>Lojas por província</h2><p class="muted">Mês actual</p></div></div>
+      <div id="provincias" class="barras-h"></div>
+    </section>
+  </div>
+  <div id="dica" class="dica" role="tooltip" hidden></div>
+
+  <h2 id="doc" class="titulo-doc">Documentação · ligar o Power BI</h2>
   <section>
     <h2>1. Estado dos dados</h2>
     <p id="resumo" class="muted">A carregar…</p>
@@ -26,7 +87,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="chave-sec">
     <h2>2. A sua chave</h2>
     <p>Cole a chave que recebeu. Fica só neste browser e é usada para gerar os links e o código abaixo.</p>
     <div class="linha">
@@ -91,6 +152,8 @@
   </section>
 </main>
 <footer class="wrap muted">Os dados vêm da pasta Heineken/Fonte (SharePoint da Tangerine) e são actualizados automaticamente sempre que os relatórios são publicados.</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="app.js"></script>
+<script src="painel.js"></script>
 </body>
 </html>
