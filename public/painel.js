@@ -19,19 +19,27 @@
 
   function chave() { try { return localStorage.getItem('chave_api') || ''; } catch { return ''; } }
 
-  async function carregar() {
-    const k = ($('chave')?.value || '').trim() || chave();
-    if (!k) { $('sem-chave').hidden = false; return; }
+  function fechado(msg, erro) {
+    $('conteudo').hidden = true; $('pilulas').hidden = true; $('sem-chave').hidden = false;
+    $('chave-msg').textContent = msg || ''; $('chave-msg').className = erro ? 'bad' : 'muted';
+  }
+
+  async function carregar(kDada) {
+    const k = (kDada || $('chave')?.value || chave() || '').trim();
+    if (!k) return fechado('');
+    if (!dados) $('chave-msg').textContent = 'A abrir…';
     try {
       const r = await fetch('/api/painel', { headers: { 'x-api-key': k }, cache: 'no-store' });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.erro || r.status);
-      $('sem-chave').hidden = true;
+      const j = await r.json().catch(() => ({}));
+      if (r.status === 403) return fechado('Chave inválida. Confirme e cole outra vez.', true);
+      if (!r.ok) throw new Error(j.erro || ('erro ' + r.status));
+      try { localStorage.setItem('chave_api', k); } catch { /* sem storage */ }
+      if ($('chave') && $('chave').value.trim() !== k) { $('chave').value = k; $('chave').dispatchEvent(new Event('input')); }
+      $('sem-chave').hidden = true; $('conteudo').hidden = false; $('pilulas').hidden = false;
       dados = j;
       desenhar();
     } catch (err) {
-      $('sem-chave').hidden = false;
-      $('sem-chave').innerHTML = `<b>Não foi possível abrir o painel:</b> ${esc(err.message)}. Confirme a chave no <a href="#chave-sec">ponto 2</a>.`;
+      if (!dados) fechado('Não foi possível ler os dados: ' + err.message + '. Tente de novo dentro de instantes.', true);
     }
   }
 
@@ -42,15 +50,15 @@
     $('p-carga').textContent = `Última carga ${horaPT(d.ultima_carga)}`;
     const pct = (a, b) => b ? Math.round(100 * a / b) + '%' : '—';
     const tiles = [
-      ['Lojas no mês', k.lojas, `${k.auditores} auditores`, '--s1'],
-      ['Audit done', k.done, `${pct(k.done, k.lojas)} das lojas`, '--good'],
-      ['Audit not done', k.not_done, `${pct(k.not_done, k.lojas)} das lojas`, '--serious'],
-      ['Visitas com PAP', k.pap_visitas, 'Product availability & price', '--s3'],
-      ['Visitas com VQ', k.vq_visitas, 'Visibility & quality', '--s7'],
-      ['Feedbacks', k.feedbacks, '1 por loja', '--s4'],
+      ['Lojas no mês', k.lojas, `${k.auditores} auditores`, ''],
+      ['Audit done', k.done, `${pct(k.done, k.lojas)} das lojas`, 'done'],
+      ['Audit not done', k.not_done, `${pct(k.not_done, k.lojas)} das lojas`, 'nd'],
+      ['Visitas com PAP', k.pap_visitas, 'Product availability & price', ''],
+      ['Visitas com VQ', k.vq_visitas, 'Visibility & quality', ''],
+      ['Feedbacks', k.feedbacks, '1 por loja', ''],
     ];
     $('kpis').innerHTML = tiles.map(([r, v, det, c]) =>
-      `<div class="kpi" style="--cor:var(${c})"><div class="rot">${r}</div><div class="val">${fmt(v)}</div><div class="det">${esc(det)}</div></div>`).join('');
+      `<div class="kpi"><div class="rot">${c ? `<i class="pt ${c}"></i>` : ''}${r}</div><div class="val">${fmt(v)}</div><div class="det">${esc(det)}</div></div>`).join('');
     auditores(); dias(); provincias(); preencherFiltro(); desenharMapa();
   }
 
@@ -156,9 +164,9 @@
     if (estados.has(v) && estados.size === 1) return;   // nunca os dois desligados
     estados.has(v) ? estados.delete(v) : estados.add(v); b.classList.toggle('on', estados.has(v)); desenharMapa();
   });
-  $('chave')?.addEventListener('change', carregar);
-  $('chave')?.addEventListener('input', () => { clearTimeout(carregar.t); carregar.t = setTimeout(carregar, 600); });
+  $('form-chave').onsubmit = e => { e.preventDefault(); carregar($('chave-topo').value); };
+  $('chave')?.addEventListener('change', () => carregar());
   document.querySelectorAll('.abas a').forEach(a => a.onclick = () => { document.querySelectorAll('.abas a').forEach(x => x.classList.remove('ativo')); a.classList.add('ativo'); });
   carregar();
-  setInterval(carregar, 5 * 60 * 1000);   // a cada 5 min volta a ler (apanha a carga nova no Neon)
+  setInterval(() => { if (dados) carregar(); }, 5 * 60 * 1000);   // a cada 5 min volta a ler (apanha a carga nova no Neon)
 })();

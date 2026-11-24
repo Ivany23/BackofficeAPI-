@@ -20,7 +20,7 @@
         <p class="sub">Painel e API Power BI — dados actualizados a cada carga</p>
       </div>
     </div>
-    <div class="pilulas">
+    <div class="pilulas" id="pilulas" hidden>
       <span class="pilula" id="p-mes">—</span>
       <span class="pilula verde" id="p-ate">Dados até —</span>
       <span class="pilula" id="p-carga">Última carga —</span>
@@ -32,10 +32,19 @@
 </header>
 
 <main class="wrap">
-  <div id="sem-chave" class="aviso" hidden>
-    <b>Cole a sua chave para ver o painel.</b> O campo está no <a href="#chave-sec">ponto 2 da documentação</a>; depois de colar, o painel abre sozinho.
-  </div>
+  <section id="sem-chave" class="desbloquear" hidden>
+    <div>
+      <h2>Abrir o painel</h2>
+      <p class="muted">Cole a chave da API — a mesma do Power BI. Fica guardada só neste browser.</p>
+    </div>
+    <form id="form-chave" class="linha" autocomplete="off">
+      <input id="chave-topo" type="password" placeholder="cole aqui a chave" aria-label="Chave da API" required>
+      <button type="submit">Abrir painel</button>
+    </form>
+    <p id="chave-msg" class="muted" aria-live="polite"></p>
+  </section>
 
+  <div id="conteudo" hidden>
   <section id="painel" class="painel">
     <div class="kpis" id="kpis"></div>
   </section>
@@ -58,7 +67,7 @@
   <section id="auditores-sec">
     <div class="sec-cab">
       <div><h2>Lojas por auditor</h2><p class="muted" id="aud-info">—</p></div>
-      <div class="legenda"><span><i class="pt done"></i>Audit done</span><span><i class="pt nd"></i>Audit not done</span><span><i class="pt sobe"></i>Subida desde a carga anterior</span></div>
+      <div class="legenda"><span><i class="pt done"></i>Audit done</span><span><i class="pt nd"></i>Audit not done</span><span><i class="pt sobe"></i>Lojas novas desde a carga anterior</span></div>
     </div>
     <div id="auditores" class="auditores"></div>
   </section>
@@ -73,6 +82,7 @@
       <div class="sec-cab"><div><h2>Lojas por província</h2><p class="muted">Mês actual · clique para ver no mapa</p></div></div>
       <div id="provincias" class="barras-h"></div>
     </section>
+  </div>
   </div>
   <div id="dica" class="dica" role="tooltip" hidden></div>
 
