@@ -116,7 +116,7 @@ def painel():
         except (ValueError, TypeError, AssertionError):
             sem_gps += 1
             continue
-        pontos.append([round(la, 6), round(lo, 6), nome, sn, sem, a, 1 if done else 0, dia])
+        pontos.append([round(la, 6), round(lo, 6), nome, sn, sem, a, 1 if done else 0, dia, pv or '(sem provincia)'])
     auditores = sorted(({'nome': n, **v, 'subida': (v['lojas'] - anterior[n]) if n in anterior
                          else (v['lojas'] if anterior else None)} for n, v in aud.items()),
                        key=lambda z: -z['lojas'])

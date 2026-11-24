@@ -15,7 +15,7 @@
   const mover = e => { const x = Math.min(e.clientX + 14, innerWidth - dica.offsetWidth - 8); dica.style.left = x + 'px'; dica.style.top = (e.clientY + 14) + 'px'; };
   const esconder = () => { dica.hidden = true; };
 
-  let mapa, camada, dados, filtroAud = '', estados = new Set([1, 0]);
+  let mapa, camada, dados, filtroAud = '', filtroProv = '', estados = new Set([1, 0]);
 
   function chave() { try { return localStorage.getItem('chave_api') || ''; } catch { return ''; } }
 
@@ -102,14 +102,25 @@
 
   function provincias() {
     const p = dados.provincias, max = Math.max(...p.map(x => x.lojas), 1);
-    $('provincias').innerHTML = p.map(x => `<div class="bh" data-t="${esc(x.nome)}: ${fmt(x.lojas)} lojas"><span>${esc(x.nome)}</span>
+    $('provincias').innerHTML = p.map(x => `<div class="bh${filtroProv === x.nome ? ' sel' : ''}" tabindex="0" data-nome="${esc(x.nome)}"><span>${esc(x.nome)}</span>
       <span><i class="b" style="display:block;width:${100 * x.lojas / max}%"></i></span><span class="v">${fmt(x.lojas)}</span></div>`).join('');
+    $('provincias').querySelectorAll('.bh').forEach(el => {
+      const nome = el.dataset.nome, x = p.find(z => z.nome === nome);
+      el.onmousemove = e => mostrar(e, `<b>${esc(nome)}</b><br>Lojas: ${fmt(x.lojas)}<br><i>Clique para ver no mapa</i>`);
+      el.onmouseleave = esconder;
+      const escolher = () => { filtroProv = filtroProv === nome ? '' : nome; $('f-provincia').value = filtroProv; provincias(); desenharMapa(); document.getElementById('mapa-sec').scrollIntoView(); };
+      el.onclick = escolher;
+      el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); escolher(); } };
+    });
   }
 
   function preencherFiltro() {
     const s = $('f-auditor'), atual = filtroAud;
     s.innerHTML = '<option value="">Todos os auditores</option>' + dados.auditores.map(a => `<option>${esc(a.nome)}</option>`).join('');
     s.value = atual;
+    const sp = $('f-provincia'), ap = filtroProv;
+    sp.innerHTML = '<option value="">Todas as províncias</option>' + dados.provincias.map(x => `<option>${esc(x.nome)}</option>`).join('');
+    sp.value = ap;
   }
 
   function desenharMapa() {
@@ -122,22 +133,24 @@
     }
     camada.clearLayers();
     const good = cor('--good'), serious = cor('--serious'), pts = [];
-    for (const [la, lo, nome, sn, sem, aud, done, dia] of dados.lojas) {
+    for (const [la, lo, nome, sn, sem, aud, done, dia, prov] of dados.lojas) {
       if (filtroAud && aud !== filtroAud) continue;
+      if (filtroProv && prov !== filtroProv) continue;
       if (!estados.has(done)) continue;
       const mk = L.circleMarker([la, lo], { radius: 6, weight: 2, color: '#ffffff', fillColor: done ? good : serious, fillOpacity: .95 });
-      mk.bindPopup(`<b>${esc(nome)}</b><br>Store No: ${esc(sn)} · S.E.M. ID: ${esc(sem || '—')}<br>Auditor: ${esc(aud)}<br>
+      mk.bindPopup(`<b>${esc(nome)}</b><br>Store No: ${esc(sn)} · S.E.M. ID: ${esc(sem || '—')}<br>Auditor: ${esc(aud)} · ${esc(prov)}<br>
         Estado: <b>${done ? '✔ Audit done' : '✖ Audit not done'}</b><br>Visita: ${dataPT(dia)}`);
       camada.addLayer(mk); pts.push([la, lo]);
     }
     const tot = dados.lojas.length;
-    $('mapa-info').textContent = `${fmt(pts.length)} lojas no mapa${filtroAud ? ` · ${filtroAud}` : ''}` +
+    $('mapa-info').textContent = `${fmt(pts.length)} lojas no mapa${filtroAud ? ` · ${filtroAud}` : ''}${filtroProv ? ` · ${filtroProv}` : ''}` +
       (dados.sem_gps ? ` · ${fmt(dados.sem_gps)} sem GPS válido (fora do mapa)` : '') + ` · total com GPS ${fmt(tot)}`;
     if (pts.length) mapa.fitBounds(pts, { padding: [24, 24], maxZoom: 14 });
     setTimeout(() => mapa.invalidateSize(), 50);
   }
 
   $('f-auditor').onchange = e => { filtroAud = e.target.value; auditores(); desenharMapa(); };
+  $('f-provincia').onchange = e => { filtroProv = e.target.value; provincias(); desenharMapa(); };
   document.querySelectorAll('.chip[data-st]').forEach(b => b.onclick = () => {
     const v = +b.dataset.st;
     if (estados.has(v) && estados.size === 1) return;   // nunca os dois desligados
