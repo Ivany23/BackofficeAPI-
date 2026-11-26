@@ -168,5 +168,5 @@
   $('chave')?.addEventListener('change', () => carregar());
   document.querySelectorAll('.abas a').forEach(a => a.onclick = () => { document.querySelectorAll('.abas a').forEach(x => x.classList.remove('ativo')); a.classList.add('ativo'); });
   carregar();
-  setInterval(() => { if (dados) carregar(); }, 5 * 60 * 1000);   // a cada 5 min volta a ler (apanha a carga nova no Neon)
+  // 26/11: sem leitura automatica de 5 em 5 min (mantinha o Neon ligado e gastava a quota); le ao abrir a pagina
 })();
