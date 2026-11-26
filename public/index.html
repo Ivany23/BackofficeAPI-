@@ -2,169 +2,135 @@
 <html lang="pt">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Heineken API Power BI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eef3f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f0d" media="(prefers-color-scheme: dark)">
+<title>Heineken Retail Audit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="estilo.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%231d7a49%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%226%22 fill=%22%23e2f1e7%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="dashboard.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23178a4c%22/%3E%3Cpath d=%22M16 7l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z%22 fill=%22%23fff%22/%3E%3C/svg%3E">
 </head>
 <body>
-<header class="topo">
-  <div class="wrap topo-in">
+<div class="ceu" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header class="barra">
+  <div class="barra-in">
     <div class="marca">
-      <span class="logo" aria-hidden="true"></span>
-      <div>
-        <h1>Heineken · Retail Audit</h1>
-        <p class="sub">Painel e API Power BI — dados actualizados a cada carga</p>
-      </div>
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2l2.5 5.3 5.8.6-4.4 3.9 1.3 5.7L12 15.8l-5.2 2.9 1.3-5.7-4.4-3.9 5.8-.6z"/></svg></span>
+      <div class="marca-txt"><b>Heineken</b><span>Retail Audit</span></div>
     </div>
-    <div class="pilulas" id="pilulas" hidden>
-      <span class="pilula" id="p-mes">—</span>
-      <span class="pilula verde" id="p-ate">Dados até —</span>
-      <span class="pilula" id="p-carga">Última carga —</span>
+    <div class="seg" id="meses" role="tablist" aria-label="Escolher o mês" hidden><span class="seg-pol" aria-hidden="true"></span></div>
+    <div class="barra-acoes">
+      <button class="vidro-btn icone" id="sair" type="button" title="Trancar (esquecer a chave neste browser)" aria-label="Trancar" hidden>
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      </button>
+      <a class="vidro-btn" href="documentacao.html">
+        <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>
+        <span>Documentação</span>
+      </a>
     </div>
   </div>
-  <nav class="wrap abas">
-    <a href="#painel" class="ativo">Painel</a><a href="#mapa-sec">Mapa</a><a href="#auditores-sec">Auditores</a><a href="#doc">Documentação</a>
-  </nav>
 </header>
 
-<main class="wrap">
-  <section id="sem-chave" class="desbloquear" hidden>
-    <div>
-      <h2>Abrir o painel</h2>
-      <p class="muted">Cole a chave da API — a mesma do Power BI. Fica guardada só neste browser.</p>
-    </div>
-    <form id="form-chave" class="linha" autocomplete="off">
-      <input id="chave-topo" type="password" placeholder="cole aqui a chave" aria-label="Chave da API" required>
-      <button type="submit">Abrir painel</button>
-    </form>
-    <p id="chave-msg" class="muted" aria-live="polite"></p>
-  </section>
+<div class="folha" id="folha" hidden>
+  <form class="folha-card vidro" id="form-chave" autocomplete="off">
+    <span class="logo grande" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2l2.5 5.3 5.8.6-4.4 3.9 1.3 5.7L12 15.8l-5.2 2.9 1.3-5.7-4.4-3.9 5.8-.6z"/></svg></span>
+    <h1>Heineken Retail Audit</h1>
+    <p>Cole a chave da API (a mesma do Power BI) para abrir o dashboard. Os dados abrem neste browser e a chave fica guardada só aqui.</p>
+    <input id="chave" type="password" placeholder="Chave da API" aria-label="Chave da API" required>
+    <button type="submit" class="primario" id="abrir">Abrir dashboard</button>
+    <p class="folha-msg" id="msg" aria-live="polite"></p>
+  </form>
+</div>
 
-  <div id="conteudo" hidden>
-  <section id="painel" class="painel">
+<main id="app" hidden>
+  <section id="resumo" class="bloco-sec">
+    <div class="titulo-grande">
+      <div>
+        <p class="sobre" id="sobre">—</p>
+        <h1 id="titulo">—</h1>
+      </div>
+      <p class="estado-dados" id="estado-dados"></p>
+    </div>
     <div class="kpis" id="kpis"></div>
   </section>
 
-  <section id="mapa-sec">
-    <div class="sec-cab">
-      <div><h2>Mapa das lojas</h2><p class="muted" id="mapa-info">—</p></div>
-      <div class="filtros">
-        <select id="f-auditor" aria-label="Filtrar por auditor"><option value="">Todos os auditores</option></select>
-        <select id="f-provincia" aria-label="Filtrar por província"><option value="">Todas as províncias</option></select>
-        <div class="chips" role="group" aria-label="Filtrar por estado">
-          <button type="button" class="chip on" data-st="1"><i class="pt done"></i>Audit done</button>
-          <button type="button" class="chip on" data-st="0"><i class="pt nd"></i>Audit not done</button>
-        </div>
+  <section id="semanas" class="bloco-sec">
+    <div class="cab"><div><h2>Desempenho semanal</h2><p id="sem-info">—</p></div>
+      <div class="legenda"><span><i class="pt done"></i>Audit done</span><span><i class="pt nd"></i>Audit not done</span></div></div>
+    <div class="sem-cards" id="sem-cards"></div>
+    <div class="grelha g-2-1">
+      <div class="cartao">
+        <div class="cab-mini"><h3>Visitas por dia</h3><p id="dias-info">—</p></div>
+        <div class="colunas" id="dias"></div>
+      </div>
+      <div class="cartao">
+        <div class="cab-mini"><h3>Taxa de Audit done por semana</h3><p>% das visitas de cada semana</p></div>
+        <div class="taxa" id="taxa"></div>
       </div>
     </div>
-    <div id="mapa" role="region" aria-label="Mapa das lojas (OpenStreetMap)"></div>
   </section>
 
-  <section id="auditores-sec">
-    <div class="sec-cab">
-      <div><h2>Lojas por auditor</h2><p class="muted" id="aud-info">—</p></div>
-      <div class="legenda"><span><i class="pt done"></i>Audit done</span><span><i class="pt nd"></i>Audit not done</span><span><i class="pt sobe"></i>Lojas novas desde a carga anterior</span></div>
-    </div>
-    <div id="auditores" class="auditores"></div>
-  </section>
-
-  <div class="grelha2">
-    <section>
-      <div class="sec-cab"><div><h2>Leituras por dia</h2><p class="muted">Visitas do mês por dia</p></div>
-        <div class="legenda"><span><i class="pt done"></i>Audit done</span><span><i class="pt nd"></i>Audit not done</span></div></div>
-      <div id="dias" class="grafico"></div>
-    </section>
-    <section>
-      <div class="sec-cab"><div><h2>Lojas por província</h2><p class="muted">Mês actual · clique para ver no mapa</p></div></div>
-      <div id="provincias" class="barras-h"></div>
-    </section>
-  </div>
-  </div>
-  <div id="dica" class="dica" role="tooltip" hidden></div>
-
-  <h2 id="doc" class="titulo-doc">Documentação · ligar o Power BI</h2>
-  <section>
-    <h2>1. Estado dos dados</h2>
-    <p id="resumo" class="muted">A carregar…</p>
-    <div class="tabela-scroll">
-      <table id="estado">
-        <thead><tr><th>Tabela</th><th class="num">Linhas</th><th class="num">Páginas</th><th>Linhas por mês</th><th>Dados até</th><th>Actualizado</th></tr></thead>
-        <tbody></tbody>
-      </table>
+  <section id="analise" class="bloco-sec">
+    <div class="cab"><div><h2>Análise do mês</h2><p>Estado das visitas, disponibilidade Heineken, canais e feedback</p></div></div>
+    <div class="grelha g-donuts">
+      <div class="cartao"><div class="cab-mini"><h3>Estado das visitas</h3><p>Audit done vs not done</p></div><div class="donut-box" id="d-estado"></div></div>
+      <div class="cartao"><div class="cab-mini"><h3>Disponibilidade Heineken</h3><p>Leituras de produto (PAP)</p></div><div class="donut-box" id="d-heineken"></div></div>
+      <div class="cartao"><div class="cab-mini"><h3>Canais</h3><p>Visitas por canal da loja</p></div><div class="donut-box" id="d-canais"></div></div>
+      <div class="cartao"><div class="cab-mini"><h3>Feedback</h3><p>Categorias do feedback report</p></div><div class="donut-box" id="d-feedback"></div></div>
     </div>
   </section>
 
-  <section id="chave-sec">
-    <h2>2. A sua chave</h2>
-    <p>Cole a chave que recebeu. Fica só neste browser e é usada para gerar os links e o código abaixo.</p>
-    <div class="linha">
-      <input id="chave" type="password" placeholder="cole aqui a chave" autocomplete="off">
-      <button id="mostrar" class="sec" type="button">Mostrar</button>
-      <button id="testar" type="button">Testar</button>
+  <section id="mapa-sec" class="bloco-sec">
+    <div class="cab"><div><h2>Mapa das lojas</h2><p id="mapa-info">—</p></div></div>
+    <div class="cartao mapa-cartao">
+      <div class="filtros">
+        <div class="seg pequeno" id="f-semana" role="group" aria-label="Filtrar por semana"><span class="seg-pol" aria-hidden="true"></span></div>
+        <select id="f-auditor" aria-label="Filtrar por auditor"></select>
+        <select id="f-provincia" aria-label="Filtrar por província"></select>
+        <div class="chips" role="group" aria-label="Filtrar por estado">
+          <button type="button" class="chip on" data-st="1" aria-pressed="true"><i class="pt done"></i>Done</button>
+          <button type="button" class="chip on" data-st="0" aria-pressed="true"><i class="pt nd"></i>Not done</button>
+        </div>
+      </div>
+      <div id="mapa" role="region" aria-label="Mapa das lojas"></div>
     </div>
-    <p id="teste" class="muted"></p>
   </section>
 
-  <section>
-    <h2>3. Ligar o Power BI Desktop (passo a passo)</h2>
-    <ol class="passos">
-      <li>Abra o <b>Power BI Desktop</b> → <b>Relatório em branco</b>.</li>
-      <li><b>Base → Obter dados → Consulta em branco</b>. Abre o Editor do Power Query.</li>
-      <li>Em cada bloco abaixo: <b>Nova origem → Consulta em branco → Editor avançado</b> → apagar tudo → colar <b>só esse bloco</b> → <b>Concluído</b> → mudar o nome da consulta (à direita, em <i>Nome</i>) para o nome indicado no bloco. Os nomes têm de ser exactamente iguais (maiúsculas contam).</li>
-      <li>Quando aparecer o aviso amarelo de credenciais: <b>Editar credenciais → Anónimo</b> → nível: o endereço mais curto → <b>Ligar</b>.</li>
-      <li>Se perguntar níveis de privacidade: escolha <b>Organizacional</b> (ou <i>Ignorar</i>).</li>
-      <li><b>Fechar e aplicar</b>. O PAP é a maior tabela (17 páginas) e demora cerca de 1–2 minutos.</li>
-      <li>Relações (vista <b>Modelo</b>) — apague as que o Power BI criou sozinho e crie estas:
-        <table class="mini">
-          <tr><th>De</th><th>Para</th><th>Cardinalidade</th><th>Activa</th></tr>
-          <tr><td>survey_feedback[store_nu]</td><td>demographics[store_nu]</td><td>Muitos para um</td><td>Sim</td></tr>
-          <tr><td>product_availability_price[visit_nu]</td><td>survey_visit_db[visit_nu]</td><td>Muitos para um</td><td>Sim</td></tr>
-          <tr><td>demographics[visit_nu]</td><td>survey_visit_db[visit_nu]</td><td>Um para um</td><td>Sim</td></tr>
-          <tr><td>product_availability_price[store_nu]</td><td>demographics[store_nu]</td><td>Muitos para um</td><td>Não</td></tr>
-        </table>
-      </li>
-      <li>Confira o número de linhas de cada tabela (vista <b>Tabela</b>, em baixo à esquerda) com a coluna <i>Linhas</i> do ponto 1.</li>
-      <li>Dados novos: basta carregar em <b>Actualizar</b>.</li>
-    </ol>
-    <div id="blocos"></div>
+  <section id="equipa" class="bloco-sec">
+    <div class="cab"><div><h2>Equipa</h2><p id="eq-info">—</p></div>
+      <div class="legenda"><span class="escala" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>menos → mais visitas na semana</span></div></div>
+    <div class="cartao tabela-cartao"><div class="rolar"><table class="eq" id="eq"></table></div></div>
+    <div class="cartao">
+      <div class="cab-mini"><h3>Províncias</h3><p>Visitas por província · toque numa para ver no mapa</p></div>
+      <div class="provs" id="provs"></div>
+    </div>
   </section>
 
-  <section>
-    <h2>4. Power BI online (app.powerbi.com)</h2>
-    <ol class="passos">
-      <li>No Power BI Desktop: <b>Publicar</b> → escolher o workspace.</li>
-      <li>Em app.powerbi.com: abrir o workspace → no <b>modelo semântico</b>: <b>⋯ → Definições</b>.</li>
-      <li><b>Credenciais da origem de dados → Editar credenciais</b> → Método de autenticação <b>Anónimo</b>, nível de privacidade <b>Organizacional</b> → <b>Iniciar sessão</b>.</li>
-      <li><b>Actualização agendada</b> → Ligado → escolher as horas → <b>Aplicar</b>. Não é preciso gateway.</li>
-    </ol>
+  <section id="produtos" class="bloco-sec">
+    <div class="cab"><div><h2>Produtos Heineken</h2><p>Disponibilidade nas lojas e preço unitário médio (PAP)</p></div>
+      <div class="legenda"><span><i class="pt on"></i>On shelf</span><span><i class="pt oos"></i>Out of stock</span><span><i class="pt ns"></i>Not stocked</span></div></div>
+    <div class="cartao"><div class="prods" id="prods"></div></div>
   </section>
 
-  <section>
-    <h2>5. A API (para quem programa)</h2>
-    <table class="mini">
-      <tr><th>Pedido</th><th>Devolve</th></tr>
-      <tr><td><code>GET <span class="base"></span>/api/estado</code></td><td>JSON público: tabelas, linhas, páginas, colunas, linhas por mês, data dos dados, hora da última actualização.</td></tr>
-      <tr><td><code>GET <span class="base"></span>/api/dados?tabela=&lt;tabela&gt;&amp;pagina=&lt;n&gt;&amp;chave=&lt;chave&gt;</code></td><td>CSV UTF-8 (vírgula, decimal com ponto, datas AAAA-MM-DD) com cabeçalho e até <span id="porpagina">10 000</span> linhas. Páginas a partir de 1. A chave também pode ir no cabeçalho <code>x-api-key</code>.</td></tr>
-    </table>
-    <p>Tabelas: <code>demographics</code>, <code>survey_visit_db</code>, <code>survey_feedback</code>, <code>product_availability_price</code>, <code>visibility_quality</code>. Juntam todos os meses (coluna <code>survey_number</code> = AAAAMM).</p>
-    <p>Exemplo: <code id="exemplo"></code> <button class="sec copiar" data-alvo="exemplo" type="button">Copiar</button></p>
-    <table class="mini">
-      <tr><th>Erro</th><th>Significa</th><th>O que fazer</th></tr>
-      <tr><td>403 Chave inválida</td><td>A chave não está certa</td><td>Confirmar a chave (ponto 2) e o parâmetro <code>ChaveApi</code></td></tr>
-      <tr><td>404 Página não existe</td><td>Pedido para lá da última página</td><td>Ver o número de páginas em <code>/api/estado</code></td></tr>
-      <tr><td>Power BI: "credenciais inválidas"</td><td>Credencial guardada errada</td><td>Ficheiro → Opções e definições → Definições da origem de dados → limpar permissões deste endereço → escolher <b>Anónimo</b></td></tr>
-      <tr><td>Power BI: "Token Eof expected"</td><td>Dois blocos colados juntos</td><td>Apagar tudo no Editor avançado e colar só um bloco</td></tr>
-      <tr><td>Power BI: "The name … wasn't recognized"</td><td>Nome de consulta diferente</td><td>Mudar o nome para <code>ApiBase</code>, <code>ChaveApi</code> ou <code>fnTabela</code></td></tr>
-    </table>
-  </section>
+  <p class="rodape" id="rodape"></p>
 </main>
-<footer class="wrap muted">Os dados vêm da pasta Heineken/Fonte (SharePoint da Tangerine) e são actualizados automaticamente sempre que os relatórios são publicados.</footer>
+
+<nav class="tabbar vidro" id="tabbar" aria-label="Secções" hidden>
+  <a href="#resumo" data-s="resumo"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg><span>Resumo</span></a>
+  <a href="#semanas" data-s="semanas"><svg viewBox="0 0 24 24"><path d="M5 20V11M10 20V5M15 20v-7M20 20V8"/></svg><span>Semanas</span></a>
+  <a href="#analise" data-s="analise"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12l6 6"/></svg><span>Análise</span></a>
+  <a href="#mapa-sec" data-s="mapa-sec"><svg viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg><span>Mapa</span></a>
+  <a href="#equipa" data-s="equipa"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 6M17.5 14.2a5 5 0 0 1 3 4.8"/></svg><span>Equipa</span></a>
+  <a href="#produtos" data-s="produtos"><svg viewBox="0 0 24 24"><path d="M9 3h6v4l1.5 2.5V20a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1V9.5L9 7z"/><path d="M7.5 13h9"/></svg><span>Produtos</span></a>
+</nav>
+
+<div id="dica" class="dica vidro" role="tooltip" hidden></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="app.js"></script>
-<script src="painel.js"></script>
+<script src="dashboard.js"></script>
 </body>
 </html>

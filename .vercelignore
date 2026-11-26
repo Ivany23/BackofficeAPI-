@@ -2,3 +2,4 @@
 .env.*
 servidor_local.py
 __pycache__/
+gerar_dashboard.py

@@ -130,3 +130,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, .aud:focus-visi
 .bad { color: var(--bad); font-weight: 600; }
 .meses { font-size: 13px; color: var(--muted); }
 @media (max-width: 640px) { .topo { position: static; } html { scroll-padding-top: 0; } }
+
+/* 26/11: pagina de documentacao separada do dashboard */
+.voltar { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink); box-shadow: var(--sombra); }
+.voltar:hover { border-color: var(--accent); color: var(--accent); }
