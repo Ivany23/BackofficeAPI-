@@ -47,16 +47,22 @@
 
   <section class="aviso">
     <h2>Novo (27/11/2026): 3 colunas no PAP</h2>
-    <p>O <code>product_availability_price</code> passou a ter <b>Stock Transaction No. of Facings</b>, <b>Stock Transaction Units available</b> e <b>Stock Transaction Packs available</b> (Novembro em diante; Setembro e Outubro ficam vazios). Se o Power BI já está ligado, só é preciso trocar a consulta do PAP:</p>
+    <p>O <code>product_availability_price</code> passou a ter 3 colunas novas (Novembro em diante; Setembro e Outubro ficam vazios). Se o Power BI já está ligado, só é preciso trocar a consulta do PAP:</p>
+    <table class="mini">
+      <tr><th>Coluna</th><th>Significa</th><th>Tipo</th><th>No BeatRoute chama-se</th></tr>
+      <tr><td><code>facings</code></td><td>Nº de frentes do produto na prateleira</td><td>Número inteiro</td><td>Stock Transaction No. of Facings</td></tr>
+      <tr><td><code>units_available</code></td><td>Unidades disponíveis</td><td>Número inteiro</td><td>Stock Transaction Units available</td></tr>
+      <tr><td><code>packs_available</code></td><td>Packs (grades) disponíveis</td><td>Número decimal</td><td>Stock Transaction Packs available</td></tr>
+    </table>
     <ol class="passos">
       <li>Power BI Desktop → <b>Base → Transformar dados</b> (abre o Editor do Power Query).</li>
       <li>À esquerda, clique na consulta <code>product_availability_price</code> → <b>Base → Editor avançado</b>.</li>
       <li>Apague tudo e cole o bloco <code>product_availability_price</code> do ponto 3 (botão <b>Copiar</b>) → <b>Concluído</b>.</li>
       <li>Faça o mesmo na consulta <code>fnTabela</code> com o bloco <code>fnTabela</code> do ponto 3 (passa a tratar valores que não são número).</li>
       <li>Se aparecer "The import fnTabela matches no exports": o ficheiro ainda não tem as consultas da API — cole os 8 blocos do ponto 3 (ApiBase, ChaveApi, fnTabela e as 5 tabelas).</li>
-      <li><b>Fechar e aplicar</b>. As 3 colunas aparecem no fim da tabela: Facings e Units available como número inteiro, Packs available como número decimal.</li>
+      <li><b>Fechar e aplicar</b>. As 3 colunas aparecem no fim da tabela: <code>facings</code>, <code>units_available</code> e <code>packs_available</code>.</li>
     </ol>
-    <p class="muted">Valores que não são número (ex.: 65 leituras de Units available com só ".") ficam vazios no Power BI em vez de erro. Os dados da API não são alterados.</p>
+    <p class="muted">Valores que não são número (ex.: 65 leituras de <code>units_available</code> com só ".") ficam vazios no Power BI em vez de erro. Os dados da API não são alterados.</p>
   </section>
 
   <section>
