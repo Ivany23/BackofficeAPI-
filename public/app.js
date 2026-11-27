@@ -54,9 +54,11 @@ let
     Verifica2  = if Table.RowCount(Junta) <> Info[linhas] then error "Linhas incompletas em " & tabela else null,
     // tipos so nas colunas que existem; numeros e datas lidos em formato en-US (ponto decimal)
     Existentes = List.Select(tipos, each List.Contains(Table.ColumnNames(Junta), _{0})),
-    Tipado     = Table.TransformColumnTypes(Junta, Existentes, "en-US")
+    Tipado     = Table.TransformColumnTypes(Junta, Existentes, "en-US"),
+    // valor que nao e numero/data (ex.: "." escrito pelo auditor) fica vazio em vez de erro
+    Limpo      = Table.ReplaceErrorValues(Tipado, List.Transform(Existentes, each {_{0}, null}))
 in
-    if Verifica1 = null and Verifica2 = null then Tipado else Tipado`;
+    if Verifica1 = null and Verifica2 = null then Limpo else Limpo`;
 
 function lerChave() { try { return localStorage.getItem('chave_api') || ''; } catch { return ''; } }
 function gravarChave(v) { try { localStorage.setItem('chave_api', v); } catch { /* sem storage */ } }
