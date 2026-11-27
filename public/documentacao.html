@@ -45,6 +45,18 @@
     <p id="teste" class="muted"></p>
   </section>
 
+  <section class="aviso">
+    <h2>Novo (27/11/2026): 3 colunas no PAP</h2>
+    <p>O <code>product_availability_price</code> passou a ter <b>Stock Transaction No. of Facings</b>, <b>Stock Transaction Units available</b> e <b>Stock Transaction Packs available</b> (Novembro em diante; Setembro e Outubro ficam vazios). Se o Power BI já está ligado, só é preciso trocar a consulta do PAP:</p>
+    <ol class="passos">
+      <li>Power BI Desktop → <b>Base → Transformar dados</b> (abre o Editor do Power Query).</li>
+      <li>À esquerda, clique na consulta <code>product_availability_price</code> → <b>Base → Editor avançado</b>.</li>
+      <li>Apague tudo e cole o bloco <code>product_availability_price</code> do ponto 3 (botão <b>Copiar</b>) → <b>Concluído</b>.</li>
+      <li><b>Fechar e aplicar</b>. As 3 colunas aparecem no fim da tabela: Facings e Units available como número inteiro, Packs available como número decimal.</li>
+    </ol>
+    <p class="muted">65 leituras de Units available têm só "." escrito pelo auditor: no Power BI ficam vazias (em vez de erro). Os dados da API não são alterados.</p>
+  </section>
+
   <section>
     <h2>3. Ligar o Power BI Desktop (passo a passo)</h2>
     <ol class="passos">

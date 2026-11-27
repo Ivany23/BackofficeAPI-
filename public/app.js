@@ -24,7 +24,9 @@ const TIPOS = {
     {"out_of_stock", Int64.Type}, {"not_stocked", Int64.Type},
     {"pack_price", type number}, {"unit_price", type number},
     {"store_latitude", type number}, {"store_longitude", type number},
-    {"date_modified", type date}, {"survey_date", type date}, {"survey_number", Int64.Type}`,
+    {"date_modified", type date}, {"survey_date", type date}, {"survey_number", Int64.Type},
+    {"Stock Transaction No. of Facings", Int64.Type}, {"Stock Transaction Units available", Int64.Type},
+    {"Stock Transaction Packs available", type number}`,
   visibility_quality: `{"visit_nu", type text}, {"store_nu", Int64.Type}, {"sem_id", Int64.Type},
     {"store_name", type text}, {"region", type text}, {"province", type text},
     {"item", type text}, {"value", type text},
@@ -60,13 +62,25 @@ function lerChave() { try { return localStorage.getItem('chave_api') || ''; } ca
 function gravarChave(v) { try { localStorage.setItem('chave_api', v); } catch { /* sem storage */ } }
 const mStr = s => '"' + s.replace(/"/g, '""') + '"';
 
+// 27/11: PAP com as 3 colunas novas do BeatRoute (Facings, Units / Packs available). Os poucos valores que nao sao
+// numero (ex.: "." escrito pelo auditor) ficam vazios no Power BI em vez de erro; os dados da API nao mudam.
+const PAP_M = tipos => `let
+    Dados  = fnTabela("product_availability_price", {
+    ${tipos}
+}),
+    Novas  = List.Intersect({{"Stock Transaction No. of Facings", "Stock Transaction Units available",
+                              "Stock Transaction Packs available"}, Table.ColumnNames(Dados)}),
+    Limpo  = Table.ReplaceErrorValues(Dados, List.Transform(Novas, each {_, null}))
+in
+    Limpo`;
+
 function blocos() {
   const chave = $('chave').value.trim() || 'COLE_AQUI_A_CHAVE';
   const lista = [
     ['ApiBase', `${mStr(BASE)} meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]`],
     ['ChaveApi', `${mStr(chave)} meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]`],
     ['fnTabela', FN],
-    ...Object.entries(TIPOS).map(([t, tipos]) => [t, `fnTabela("${t}", {\n    ${tipos}\n})`]),
+    ...Object.entries(TIPOS).map(([t, tipos]) => [t, t === 'product_availability_price' ? PAP_M(tipos) : `fnTabela("${t}", {\n    ${tipos}\n})`]),
   ];
   $('blocos').innerHTML = '';
   lista.forEach(([nome, codigo], i) => {
