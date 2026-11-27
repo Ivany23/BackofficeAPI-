@@ -52,9 +52,11 @@
       <li>Power BI Desktop → <b>Base → Transformar dados</b> (abre o Editor do Power Query).</li>
       <li>À esquerda, clique na consulta <code>product_availability_price</code> → <b>Base → Editor avançado</b>.</li>
       <li>Apague tudo e cole o bloco <code>product_availability_price</code> do ponto 3 (botão <b>Copiar</b>) → <b>Concluído</b>.</li>
+      <li>Faça o mesmo na consulta <code>fnTabela</code> com o bloco <code>fnTabela</code> do ponto 3 (passa a tratar valores que não são número).</li>
+      <li>Se aparecer "The import fnTabela matches no exports": o ficheiro ainda não tem as consultas da API — cole os 8 blocos do ponto 3 (ApiBase, ChaveApi, fnTabela e as 5 tabelas).</li>
       <li><b>Fechar e aplicar</b>. As 3 colunas aparecem no fim da tabela: Facings e Units available como número inteiro, Packs available como número decimal.</li>
     </ol>
-    <p class="muted">65 leituras de Units available têm só "." escrito pelo auditor: no Power BI ficam vazias (em vez de erro). Os dados da API não são alterados.</p>
+    <p class="muted">Valores que não são número (ex.: 65 leituras de Units available com só ".") ficam vazios no Power BI em vez de erro. Os dados da API não são alterados.</p>
   </section>
 
   <section>

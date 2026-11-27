@@ -64,25 +64,13 @@ function lerChave() { try { return localStorage.getItem('chave_api') || ''; } ca
 function gravarChave(v) { try { localStorage.setItem('chave_api', v); } catch { /* sem storage */ } }
 const mStr = s => '"' + s.replace(/"/g, '""') + '"';
 
-// 27/11: PAP com as 3 colunas novas do BeatRoute (Facings, Units / Packs available). Os poucos valores que nao sao
-// numero (ex.: "." escrito pelo auditor) ficam vazios no Power BI em vez de erro; os dados da API nao mudam.
-const PAP_M = tipos => `let
-    Dados  = fnTabela("product_availability_price", {
-    ${tipos}
-}),
-    Novas  = List.Intersect({{"Stock Transaction No. of Facings", "Stock Transaction Units available",
-                              "Stock Transaction Packs available"}, Table.ColumnNames(Dados)}),
-    Limpo  = Table.ReplaceErrorValues(Dados, List.Transform(Novas, each {_, null}))
-in
-    Limpo`;
-
 function blocos() {
   const chave = $('chave').value.trim() || 'COLE_AQUI_A_CHAVE';
   const lista = [
     ['ApiBase', `${mStr(BASE)} meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]`],
     ['ChaveApi', `${mStr(chave)} meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]`],
     ['fnTabela', FN],
-    ...Object.entries(TIPOS).map(([t, tipos]) => [t, t === 'product_availability_price' ? PAP_M(tipos) : `fnTabela("${t}", {\n    ${tipos}\n})`]),
+    ...Object.entries(TIPOS).map(([t, tipos]) => [t, `fnTabela("${t}", {\n    ${tipos}\n})`]),
   ];
   $('blocos').innerHTML = '';
   lista.forEach(([nome, codigo], i) => {
